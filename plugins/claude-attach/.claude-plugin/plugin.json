@@ -1,11 +1,12 @@
 {
   "name": "claude-attach",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Attach files to Claude Code sessions with interactive macOS Finder file picker",
   "author": {
     "name": "Josue Rodriguez"
   },
   "license": "MIT",
   "repository": "https://github.com/jdrodriguez/claudecode-file-attach-plugin",
-  "keywords": ["attachments", "file-picker", "finder", "macos"]
+  "keywords": ["attachments", "file-picker", "finder", "macos"],
+  "hooks": "./hooks/hooks.json"
 }
