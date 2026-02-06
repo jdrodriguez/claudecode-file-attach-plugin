@@ -5,7 +5,7 @@ A file attachment plugin for [Claude Code](https://claude.ai/claude-code) CLI. O
 ## Demo
 
 ```
-> /attach
+> /claude-attach:attach
 [Finder file picker opens]
 [Select one or more files]
 [Claude reads and analyzes the files]
@@ -13,7 +13,7 @@ A file attachment plugin for [Claude Code](https://claude.ai/claude-code) CLI. O
 
 ## Features
 
-- **`/attach`** — Slash command with autocomplete support
+- **`/claude-attach:attach`** — Slash command with autocomplete support
 - **`attach:`** — Inline hook for instant file picker (no LLM delay)
 - Native macOS Finder file picker dialog
 - Multiple file selection (Cmd+Click)
@@ -27,9 +27,21 @@ A file attachment plugin for [Claude Code](https://claude.ai/claude-code) CLI. O
 
 ## Install
 
+### Marketplace (recommended)
+
+In Claude Code, run:
+
+```
+/plugin → Add Marketplace → jdrodriguez/claudecode-file-attach-plugin
+```
+
+Then enable the `claude-attach` plugin when prompted. Both the slash command and the `attach:` hook are installed automatically.
+
+### Manual
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-attach.git
-cd claude-attach
+git clone https://github.com/jdrodriguez/claudecode-file-attach-plugin.git
+cd claudecode-file-attach-plugin
 bash install.sh
 ```
 
@@ -37,15 +49,15 @@ Then restart your Claude Code session.
 
 ## Usage
 
-### Slash Command (recommended)
+### Slash Command
 
 ```
-> /attach
-> /attach analyze this code
-> /attach summarize these docs
+> /claude-attach:attach
+> /claude-attach:attach analyze this code
+> /claude-attach:attach summarize these docs
 ```
 
-Type `/attach` and it appears in the autocomplete menu. Claude opens the file picker, reads the selected files, and follows your instructions.
+Type `/claude-attach` and select `attach` from the autocomplete menu. Claude opens the file picker, reads the selected files, and follows your instructions.
 
 ### Inline Hook (instant)
 
@@ -60,21 +72,21 @@ Type `attach:` anywhere in your prompt for an instant file picker — no LLM pro
 
 | Method | Speed | Autocomplete |
 |--------|-------|-------------|
-| `/attach` | ~2-3s (LLM processes skill first) | Yes |
+| `/claude-attach:attach` | ~2-3s (LLM processes skill first) | Yes |
 | `attach:` | Instant (hook runs pre-prompt) | No |
 
 ## How It Works
 
-### `/attach` (Skill)
+### Slash Command (Skill)
 
-1. Registers as a Claude Code skill at `~/.claude/skills/attach/SKILL.md`
+1. Registers as a Claude Code plugin skill via the marketplace
 2. When invoked, instructs Claude to run `osascript` to open Finder
 3. Claude reads the selected file(s) with the Read tool
 4. Claude responds based on file contents and your instructions
 
 ### `attach:` (Hook)
 
-1. Registers as a `UserPromptSubmit` hook in `~/.claude/settings.json`
+1. Registered automatically via the plugin's `hooks.json`
 2. Runs before Claude processes your prompt
 3. Opens Finder file picker via `osascript`
 4. Injects selected file paths as additional context
@@ -82,23 +94,39 @@ Type `attach:` anywhere in your prompt for an instant file picker — no LLM pro
 
 ## Uninstall
 
+### Marketplace install
+
+In Claude Code, run `/plugin` and remove the `claude-attach` plugin.
+
+### Manual install
+
 ```bash
-cd claude-attach
+cd claudecode-file-attach-plugin
 bash uninstall.sh
 ```
-
-Then manually remove the hook entry from `~/.claude/settings.json` if present.
 
 ## File Structure
 
 ```
-claude-attach/
+claudecode-file-attach-plugin/
+├── .claude-plugin/
+│   └── marketplace.json              # Marketplace manifest
+├── plugins/
+│   └── claude-attach/
+│       ├── .claude-plugin/
+│       │   └── plugin.json           # Plugin manifest
+│       ├── skills/
+│       │   └── attach/
+│       │       └── SKILL.md          # /claude-attach:attach command
+│       └── hooks/
+│           ├── hooks.json            # Hook configuration
+│           └── attach-hook.sh        # attach: instant hook script
 ├── skill/
-│   └── SKILL.md           # /attach slash command
+│   └── SKILL.md                      # Standalone skill (manual install)
 ├── hooks/
-│   └── attach-hook.sh     # attach: instant hook
-├── install.sh             # Installer
-├── uninstall.sh           # Uninstaller
+│   └── attach-hook.sh                # Standalone hook (manual install)
+├── install.sh                        # Manual installer
+├── uninstall.sh                      # Manual uninstaller
 ├── LICENSE
 └── README.md
 ```
@@ -107,7 +135,7 @@ claude-attach/
 
 - **macOS only** — uses `osascript` / AppleScript for the native file picker
 - Linux/Windows support would require platform-specific file picker alternatives (PRs welcome!)
-- The `/attach` skill has a ~2-3s delay due to LLM processing; use `attach:` for instant response
+- The slash command has a ~2-3s delay due to LLM processing; use `attach:` for instant response
 
 ## Contributing
 
