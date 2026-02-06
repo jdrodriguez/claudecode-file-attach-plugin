@@ -1,0 +1,13 @@
+{
+  "name": "claudecode-file-attach",
+  "owner": {
+    "name": "Josue Rodriguez"
+  },
+  "plugins": [
+    {
+      "name": "claude-attach",
+      "source": "./plugins/claude-attach",
+      "description": "Attach files to Claude Code sessions with interactive macOS Finder file picker"
+    }
+  ]
+}
